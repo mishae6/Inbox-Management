@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+    <main>
+      <div class="jumbotron">
+        <p>Welcome to Inbox Management</p>
+        <div class="google-btn" onclick="signInWithGoogle()">
+          <div class="google-icon-wrapper">
+            <img
+              class="google-icon"
+              src="https://img.icons8.com/color/16/000000/google-logo.png"
+            />
+          </div>
+          <p class="btn-text"><b>Sign in with Google</b></p>
+        </div>
+      </div>
+    </main>
+    <%- include('../script'); %>
+  </body>
+</html>
