@@ -202,7 +202,7 @@ const generateReplyText = async (scenario, email, userEmail) => {
       messages: [
         {
           role: "system",
-          content: `I want you to act as an Email Writer Expert. I will provide you email that user given and you have to Write a professional reply to this email based provided email context. Reply should be based on provided scenario and email body stating with Subject that is in email context, Don't skip include calendly link ${calendly_link} to create scheduled call, followed by body text.
+          content: `I want you to act as an Email Writer Expert. I will provide you email that user given and you have to Write a professional reply to this email based provided email context. Reply should be based on provided scenario and email body stating with Subject that is in email context, followed by body text.
             \n Exclude company name, position, name and regards etc. \n\n`,
         },
         {
@@ -215,7 +215,9 @@ const generateReplyText = async (scenario, email, userEmail) => {
     });
     const body = response.choices[0].message.content;
 
-    return body;
+    const finalBody = `${body} \n \nYou can schedule a meeting with us using this link: ${calendly_link}`;
+
+    return finalBody;
 
   } catch (error) {
     console.log("error while generating reply text", error);
