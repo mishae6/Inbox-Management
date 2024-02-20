@@ -215,7 +215,11 @@ const generateReplyText = async (scenario, email, userEmail) => {
     });
     const body = response.choices[0].message.content;
 
-    const finalBody = `${body} \n \nYou can schedule a meeting with us using this link: ${calendly_link}`;
+    let finalBody = body;
+
+    if(scenario === "positive"){
+      finalBody = `${body} \n \nYou can schedule a meeting with us using this link: ${calendly_link}`;
+    }
 
     return finalBody;
 
