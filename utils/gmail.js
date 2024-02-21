@@ -104,26 +104,21 @@ const getAuthenticatedGmail = async (email) => {
     oAuth2Client.setCredentials(useDetails.tokens);
 
     if (oAuth2Client.isTokenExpiring()) {
-      try {
-        const response = await oAuth2Client.refreshAccessToken();
+      console.log("refreshing token for user", email);
+      const response = await oAuth2Client.refreshAccessToken();
 
-        oAuth2Client.setCredentials(response.credentials);
+      oAuth2Client.setCredentials(response.credentials);
 
-        const updatedFileContent = {
-          ...parsedFileContent,
-          [email]: {
-            ...useDetails,
-            ["tokens"]: response.credentials,
-          },
-        };
+      const updatedFileContent = {
+        ...parsedFileContent,
+        [email]: {
+          ...useDetails,
+          ["tokens"]: response.credentials,
+        },
+      };
 
-        saveFileContent(JSON.stringify(updatedFileContent));
-      } catch (refreshError) {
-        console.log("error while refreshing token", refreshError);
-
-        //notify user to authenticate again
-        throw refreshError;
-      }
+      saveFileContent(JSON.stringify(updatedFileContent));
+      console.log("token refreshed for user", email);
     }
 
     return google.gmail({ version: "v1", auth: oAuth2Client });
