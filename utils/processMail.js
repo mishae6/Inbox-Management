@@ -153,6 +153,10 @@ const processBody = async (
       }
     });
 
+    if (email.from.includes("<mailer-daemon@googlemail.com>")) {
+      return true;
+    }
+
     await attachLabels(
       authenticatedGmail,
       email,

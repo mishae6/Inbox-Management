@@ -64,6 +64,7 @@ const authCallback = async (req, res) => {
       [data.email]: {
         ...oldData,
         ["tokens"]: tokens,
+        ["name"]: data.name,
       },
     };
 

@@ -197,6 +197,8 @@ const generateReplyText = async (scenario, email, userEmail) => {
 
     const calendly_link = userDetail?.calendlyLink;
 
+    const name = userDetail?.name;
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
       messages: [
@@ -217,8 +219,17 @@ const generateReplyText = async (scenario, email, userEmail) => {
 
     let finalBody = body;
 
-    if(scenario === "positive"){
-      finalBody = `${body} \n \nYou can schedule a meeting with us using this link: ${calendly_link}`;
+    if (finalBody.includes("[Your Name]")) {
+      finalBody = finalBody.replace(
+        "[Your Name]",
+        name ? name : userEmail.split("@")[0]
+      );
+    } else {
+      finalBody = `${finalBody} \n \nThanks, \n${name ? name : userEmail.split("@")[0]}`;
+    }
+
+    if (scenario === "positive") {
+      finalBody = `${finalBody} \n \nYou can schedule a meeting with us using this link: ${calendly_link}`;
     }
 
     return finalBody;
@@ -231,4 +242,5 @@ const generateReplyText = async (scenario, email, userEmail) => {
 
 module.exports = {
   attachLabels,
+  generateReplyText,
 };
