@@ -20,9 +20,10 @@ const notification = async (req, res) => {
     }
 
     const userDetail = parsedFileContent[msgObj.emailAddress];
+    const tokens = userDetail?.tokens;
     const prevHistoryId = userDetail?.historyId;
 
-    if (!parsedFileContent || !userDetail || !prevHistoryId) {
+    if (!parsedFileContent || !userDetail || !tokens || !prevHistoryId) {
       const updatedFileContent = {
         ...parsedFileContent,
         [msgObj.emailAddress]: {
