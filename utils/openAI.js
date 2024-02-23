@@ -118,8 +118,12 @@ const analyzeEmail = async (text) => {
 
     const jsonResponse = JSON.parse(response.choices[0].message.content);
 
+    if (!jsonResponse["sentiment"]) { 
+      console.log("No sentiment found", response.choices[0].message.content);
+      return "neutral";
+    };
+
     return jsonResponse["sentiment"];
-    // return "positive";
   } catch (error) {
     console.log("error while analyzing email", error);
     throw error;
