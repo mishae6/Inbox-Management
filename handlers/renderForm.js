@@ -20,6 +20,10 @@ const renderForm = async (req, res) => {
     return res.redirect("/");
   }
 
+  if (userDetail.refreshTokenError) {
+    return res.redirect("/");
+  }
+
   const { calendlyLink, isWatching } = userDetail;
 
   res.render("pages/information", {

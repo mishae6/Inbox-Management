@@ -63,8 +63,14 @@ const authCallback = async (req, res) => {
       ...parsedFileContent,
       [data.email]: {
         ...oldData,
-        ["tokens"]: tokens,
+        ["tokens"]: {
+          ...tokens,
+          refresh_token: tokens.refresh_token
+            ? tokens.refresh_token
+            : oldData.tokens?.refresh_token,
+        },
         ["name"]: data.name,
+        ["refreshTokenError"]: false,
       },
     };
 
@@ -105,21 +111,42 @@ const getAuthenticatedGmail = async (email) => {
     oAuth2Client.setCredentials(useDetails.tokens);
 
     if (oAuth2Client.isTokenExpiring()) {
-      console.log("refreshing token for user", email);
-      const response = await oAuth2Client.refreshAccessToken();
+      try {
+        console.log("refreshing token for user", email);
+        const response = await oAuth2Client.refreshAccessToken();
 
-      oAuth2Client.setCredentials(response.credentials);
+        oAuth2Client.setCredentials(response.credentials);
 
-      const updatedFileContent = {
-        ...parsedFileContent,
-        [email]: {
-          ...useDetails,
-          ["tokens"]: response.credentials,
-        },
-      };
+        const updatedFileContent = {
+          ...parsedFileContent,
+          [email]: {
+            ...useDetails,
+            ["tokens"]: {
+              ...response.credentials,
+              refresh_token: response.credentials?.refresh_token
+                ? response.credentials.refresh_token
+                : useDetails.tokens.refresh_token,
+            },
+            ["refreshTokenError"] : false,
+          },
+        };
 
-      saveFileContent(JSON.stringify(updatedFileContent));
-      console.log("token refreshed for user", email);
+        saveFileContent(JSON.stringify(updatedFileContent));
+        console.log("token refreshed for user", email);
+      } catch (error) {
+        console.log("error while refreshing token for email", email);
+
+        const updatedFileContent = {
+          ...parsedFileContent,
+          [email]: {
+            ...useDetails,
+            ["refreshTokenError"] : true,
+          },
+        };
+
+        saveFileContent(JSON.stringify(updatedFileContent));
+        throw error;
+      }
     }
 
     return google.gmail({ version: "v1", auth: oAuth2Client });
